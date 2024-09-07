@@ -19,7 +19,7 @@ _RESPONSE_CODES = {
     "500": "无响应或超时，接口服务异常请联系我们"
 }
 
-def response_state(code: str) -> (bool, str):
+def response_state(code: str) -> tuple[bool, str]:
     if type(code) is int:
         code = str(code)
     if code == "200":
