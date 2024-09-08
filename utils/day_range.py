@@ -19,14 +19,31 @@ def get_day_range(days):
     """
     # 获取当前日期
     today = datetime.now().date()
-    
+
     # 生成日期列表
     date_list = [(today - timedelta(days=x)).strftime('%Y-%m-%d') for x in range(days)]
-    
+
     # 返回反转后的列表,使日期按升序排列
     return date_list[::-1]
+
+
+def get_date_range(start, end):
+    start_date = datetime.strptime(start, "%Y%m%d")
+    end_date = datetime.strptime(end, "%Y%m%d")
+
+    date_list = []
+    current_date = start_date
+
+    while current_date <= end_date:
+        date_list.append(current_date.strftime("%Y%m%d"))
+        current_date += timedelta(days=1)
+
+    return date_list
+
 
 # 示例使用
 if __name__ == '__main__':
     # 获取过去7天的日期范围
     print(get_day_range(7))
+
+

@@ -38,8 +38,7 @@ def sort_semana(start_day, end_day, csv_root, city, out_base=None):
     if os.path.exists(out_path):
         print(f'{out_path} already exists')
         return os.path.abspath(out_path)
-
-    week = get_date_range(start_day=start_day, end_day=end_day)
+    week = get_date_range(start=start_day, end=end_day)
     days: list[DayDate] = [DayDate(date, city, csv_root) for date in week]
     semana_data = pd.concat([day.data for day in days], ignore_index=True)
     semana_data.to_csv(out_path, index=False)
