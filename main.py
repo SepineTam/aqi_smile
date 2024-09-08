@@ -115,6 +115,6 @@ def main(start_day, end_day, cities):
 
 if __name__ == "__main__":
     _cities = ['Shanghai', 'Beijing']
-    ssd = os.getenv("start_day")
-    end = os.getenv("end_day")
+    ssd = os.getenv("START_DAY")
+    end = os.getenv("END_DAY")
     main(start_day=ssd, end_day=end, cities=_cities)
