@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 from qweather.cities import get_cities, little_cities
 from qweather.tTravel import get_air_quality
 
-from utils.day_range import get_date_range
+from utils.path_os import generate_file_list
+from utils.day_range import get_date_range, missing_day
 from utils.format2 import dict2json, json2csv
 
 from semana.sort import sort_semana
@@ -100,21 +101,26 @@ def catch_data(start_day, end_day, cities=None, is_show: bool = False):
 
 
 def main(start_day, end_day, cities):
+    detail_types = []
     catch_data(start_day, end_day, cities)
     for city in cities:
         l_cities = little_cities(city_path='./qweather/cities_list.csv', mother_city=city)
         for l_city in l_cities:
+            loca_csv = generate_file_list(start_day, end_day, l_city, CSV_BASE)
             semana_path = convert_semana(start_day, end_day, l_city)
 
             if semana_path is not None:
                 figure_name = f"{start_day}_{end_day}_{city}_{l_city}"
-                figure_path = qplot(data_path=semana_path, figure_base=SEMANA_FIGURE,
-                                    figure_name=figure_name, is_show=False)
-                print("Figure", figure_path, "is OK")
+                aqi_figure_path = qplot_aqi(data_path=semana_path, figure_base=SEMANA_FIGURE,
+                                            figure_name=figure_name, is_show=False)
+                print("Figure", aqi_figure_path, "is OK")
+                for detail_type in detail_types:
+                    details_figure_path = qplot_details(data_path_list=loca_csv, figure_base=SEMANA_FIGURE,
+                                                        figure_name=figure_name, d_type = detail_type, is_show=False)
+                    print("Figure", details_figure_path, "is OK")
 
 
 if __name__ == "__main__":
     _cities = ['Shanghai', 'Beijing']
-    ssd = os.getenv("START_DAY")
-    end = os.getenv("END_DAY")
+    ssd, end = missing_day(os.getenv("START_DAY"), os.getenv("END_DAY"))
     main(start_day=ssd, end_day=end, cities=_cities)

@@ -41,9 +41,28 @@ def get_date_range(start, end):
     return date_list
 
 
-# 示例使用
+def missing_day(start=None, end=None):
+    # print(start, end)
+    if start is not None and end is not None:
+        return start, end
+
+    elif start is None and end is not None:
+        print("Missing start but exist end!\nGenerating end day...")
+        end_date = datetime.strptime(end, "%Y%m%d")
+        date_list = [(end_date - timedelta(days=x)).strftime('%Y%m%d') for x in range(7)]
+        return date_list[-1], date_list[0]
+
+    elif start is not None and end is None:
+        print("Missing end but exist start!\nGenerating start day...")
+        start_date = datetime.strptime(start, "%Y%m%d")
+        date_list = [(start_date + timedelta(days=x)).strftime('%Y%m%d') for x in range(7)]
+        return date_list[0], date_list[-1]
+    else:
+        print("Start and end date must exist one!")
+        return False, False
+
+
 if __name__ == '__main__':
-    # 获取过去7天的日期范围
-    print(get_day_range(7))
-
-
+    today = '20240902'
+    ssd, een = missing_day(end=today)
+    print(ssd, een)

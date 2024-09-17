@@ -37,10 +37,9 @@ def split_and_format_figure_name(figure_name):
         return None  # 如果输入字符串不匹配预期格式,返回None
 
 
-def qplot(data_path, figure_base, figure_name, is_show=False):
+def qplot_aqi(data_path, figure_base, figure_name, is_show=False):
     """
     生成AQI周变化图表
-    
     :param data_path: CSV数据文件路径
     :param figure_base: 图表保存的基础目录
     :param figure_name: 图表文件名
@@ -49,7 +48,7 @@ def qplot(data_path, figure_base, figure_name, is_show=False):
     """
     # 解析图表名称并创建保存目录
     figure_info = split_and_format_figure_name(figure_name)
-    figure_base = os.path.join(figure_base, f"{figure_info[2]}/{figure_info[3]}")
+    figure_base = os.path.join(figure_base, f"aqi/{figure_info[2]}/{figure_info[3]}")
     if not os.path.exists(figure_base):
         os.makedirs(figure_base)
 
@@ -103,6 +102,22 @@ def qplot(data_path, figure_base, figure_name, is_show=False):
     return figure_path
 
 
+def qplot_details(data_path_list, figure_base, figure_name, d_type, is_show=False):
+    figure_info = split_and_format_figure_name(figure_name)
+    figure_base = os.path.join(figure_base, f"{d_type}/{figure_info[2]}/{figure_info[3]}")
+    if not os.path.exists(figure_base):
+        os.makedirs(figure_base)
+    """plt"""
+    # 保存和显示图表
+    figure_path = os.path.join(figure_base, f"{figure_name}.png")
+    plt.savefig(figure_path)
+    if is_show:
+        plt.show()
+    plt.close()
+    return figure_path
+
+
 if __name__ == '__main__':
-    qplot(data_path='../src/data/semana/20240829_20240904_Shanghai.csv',
-          figure_base='../src/figures/semana/Shanghai/Shanghai/20240829_20240904.png')
+    qplot_aqi(data_path='../src/data/semana/20240829_20240904_Shanghai.csv',
+              figure_base='../src/figures/semana/Shanghai/Shanghai/20240829_20240904.png',
+              figure_name='20240829_20240904_Shanghai.png')
