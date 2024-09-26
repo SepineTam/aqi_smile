@@ -36,6 +36,8 @@ def get_cities(city_list=None, level: str = 'city_A', city_path: str = 'qweather
 def little_cities(city_path, mother_city) -> list:
     cities_dict = get_cities(city_path=city_path)
     son_cities = []
+    if mother_city not in cities_dict:
+        return son_cities
     for city in cities_dict[mother_city]['Location_Name_EN']:
         son_cities.append(city)
 

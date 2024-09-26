@@ -121,6 +121,6 @@ def main(start_day, end_day, cities):
 
 
 if __name__ == "__main__":
-    _cities = ['Shanghai', 'Beijing']
+    _cities = ['Jiangsu', 'Zhejiang', 'Shanghai', 'Beijing']
     ssd, end = missing_day(os.getenv("START_DAY"), os.getenv("END_DAY"))
     main(start_day=ssd, end_day=end, cities=_cities)

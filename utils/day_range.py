@@ -58,8 +58,10 @@ def missing_day(start=None, end=None):
         date_list = [(start_date + timedelta(days=x)).strftime('%Y%m%d') for x in range(7)]
         return date_list[0], date_list[-1]
     else:
-        print("Start and end date must exist one!")
-        return False, False
+        print("Start and end date must exist one!\nUse the default end day.")
+        end_date = datetime.today() - timedelta(days=1)
+        date_list = [(end_date - timedelta(days=x)).strftime('%Y%m%d') for x in range(7)]
+        return date_list[-1], date_list[0]
 
 
 if __name__ == '__main__':
