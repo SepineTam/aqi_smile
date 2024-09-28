@@ -10,6 +10,9 @@
 import os
 from dotenv import load_dotenv
 
+import time
+from datetime import datetime, timedelta
+
 from qweather.cities import get_cities, little_cities
 from qweather.tTravel import get_air_quality
 
@@ -37,6 +40,7 @@ JSON_BASE = os.path.join(DATA_PATH, "json")
 SEMANA_BASE = os.path.join(DATA_PATH, "semana")
 SEMANA_FIGURE = os.path.join(FIGURES_BASE, "semana")
 
+
 def gen_fig(): pass
 
 
@@ -53,6 +57,9 @@ def convert_semana(start_day, end_day, city):
 
 
 def catch_data(start_day, end_day, cities=None, is_show: bool = False):
+    print(end_day)
+    print()
+    print()
     if cities is None:
         cities = ['Shanghai']
     cities_name_list = []
@@ -101,26 +108,39 @@ def catch_data(start_day, end_day, cities=None, is_show: bool = False):
 
 
 def main(start_day, end_day, cities):
-    detail_types = []
+    last_end = datetime.strptime(start_day, "%Y%m%d") - timedelta(days=1)
+    last_start = last_end - timedelta(days=6)
+
+    last_end_str = last_end.strftime("%Y%m%d")
+    last_start_str = last_start.strftime("%Y%m%d")
+
+    DETAIL_TYPES = ["no2", "so2", "co", "o3", "pm10", "pm2p5"]
     catch_data(start_day, end_day, cities)
     for city in cities:
         l_cities = little_cities(city_path='./qweather/cities_list.csv', mother_city=city)
         for l_city in l_cities:
             loca_csv = generate_file_list(start_day, end_day, l_city, CSV_BASE)
             semana_path = convert_semana(start_day, end_day, l_city)
-
+            last_semana_path = convert_semana(last_start_str, last_end_str, l_city)
             if semana_path is not None:
                 figure_name = f"{start_day}_{end_day}_{city}_{l_city}"
-                aqi_figure_path = qplot_aqi(data_path=semana_path, figure_base=SEMANA_FIGURE,
-                                            figure_name=figure_name, is_show=False)
-                print("Figure", aqi_figure_path, "is OK")
-                for detail_type in detail_types:
-                    details_figure_path = qplot_details(data_path_list=loca_csv, figure_base=SEMANA_FIGURE,
-                                                        figure_name=figure_name, d_type = detail_type, is_show=False)
-                    print("Figure", details_figure_path, "is OK")
+                # aqi_figure_path = qplot_aqi(data_path=semana_path, figure_base=SEMANA_FIGURE,
+                #                             figure_name=figure_name, is_show=False)
+                # print("Figure", aqi_figure_path, "is OK")
+                for detail_type in DETAIL_TYPES:
+                    details_figure_path = qplot_details(data_path=semana_path, last_data_path=last_semana_path,
+                                                        figure_base=SEMANA_FIGURE, figure_name=figure_name,
+                                                        d_type=detail_type, is_show=False)
+                    if details_figure_path == "Wrong":
+                        ValueError("Missing the path of last data!")
+                    else:
+                        print("Figure", details_figure_path, "is OK")
 
 
 if __name__ == "__main__":
+    count_begin = time.time()
     _cities = ['Jiangsu', 'Zhejiang', 'Shanghai', 'Beijing']
     ssd, end = missing_day(os.getenv("START_DAY"), os.getenv("END_DAY"))
     main(start_day=ssd, end_day=end, cities=_cities)
+    count_end = time.time()
+    print(f"{(time_use := count_end - count_begin):.2f}s")
