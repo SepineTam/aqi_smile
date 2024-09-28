@@ -149,6 +149,7 @@ def qplot_details(data_path, last_data_path, figure_base, figure_name, figure_in
     plt.figure(figsize=(12, 6))
     for day in pivot_now.columns:
         plt.plot(pivot_now, pivot_now[day], label=day, marker='o')
+    for day in pivot_last.columns:
         plt.plot(pivot_last, pivot_last[day], label=day, marker='o')
 
     plt.title(f"{NAME_DICT[d_type]} Variation Throughout the two week\n{day_range}")
