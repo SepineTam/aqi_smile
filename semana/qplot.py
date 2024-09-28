@@ -12,10 +12,6 @@ import re
 
 import pandas as pd
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
-
-from utils.day_range import missing_day
-from utils.path_os import strip
 
 
 def is_path(s):
@@ -107,7 +103,7 @@ def qplot_aqi(data_path, figure_base, figure_name, is_show=False):
     return figure_path
 
 
-def qplot_details(data_path, last_data_path, figure_base, figure_name, d_type, is_show=False):
+def qplot_details(data_path, last_data_path, figure_base, figure_name, figure_info, last_day, d_type, is_show=False):
     """
     我想去画个柱状图，还要有一条拟合的曲线，最好左上角再带上R^2。
     :param data_path: 本期数据路径
@@ -122,11 +118,6 @@ def qplot_details(data_path, last_data_path, figure_base, figure_name, d_type, i
         return "Wrong"
     NAME_DICT: dict = {"no2": "NO2", "so2": "SO2", "co": "CO", "o3": "O3",
                        "pm10": "PM10", "pm2p5": "PM2.5",}
-    figure_info = split_and_format_figure_name(figure_name)
-
-    # 把上周的日期补上
-    ssd = datetime.strptime(figure_info[0], "%Y.%m.%d") - timedelta(days=1)
-    last_day: list = missing_day(end=ssd.strftime('%Y%m%d'))
 
     figure_base = os.path.join(figure_base, f"{d_type}/{figure_info[2]}/{figure_info[3]}")
     if not os.path.exists(figure_base):

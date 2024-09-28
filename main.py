@@ -23,6 +23,7 @@ from utils.format2 import dict2json, json2csv
 from semana.sort import sort_semana
 from semana.qplot import *
 
+
 # 加载环境变量
 load_dotenv()
 
@@ -114,6 +115,8 @@ def main(start_day, end_day, cities):
     last_end_str = last_end.strftime("%Y%m%d")
     last_start_str = last_start.strftime("%Y%m%d")
 
+    last_day: list = [last_start_str, last_end_str]
+
     DETAIL_TYPES = ["no2", "so2", "co", "o3", "pm10", "pm2p5"]
     catch_data(start_day, end_day, cities)
     for city in cities:
@@ -124,12 +127,16 @@ def main(start_day, end_day, cities):
             last_semana_path = convert_semana(last_start_str, last_end_str, l_city)
             if semana_path is not None:
                 figure_name = f"{start_day}_{end_day}_{city}_{l_city}"
-                # aqi_figure_path = qplot_aqi(data_path=semana_path, figure_base=SEMANA_FIGURE,
-                #                             figure_name=figure_name, is_show=False)
-                # print("Figure", aqi_figure_path, "is OK")
+                aqi_figure_path = qplot_aqi(data_path=semana_path, figure_base=SEMANA_FIGURE,
+                                            figure_name=figure_name, is_show=False)
+                print("Figure", aqi_figure_path, "is OK")
+
+                # 为了加快运行速度，把一些重复性相同传入和输出的东西拿到外面
+                figure_info = split_and_format_figure_name(figure_name)
                 for detail_type in DETAIL_TYPES:
                     details_figure_path = qplot_details(data_path=semana_path, last_data_path=last_semana_path,
                                                         figure_base=SEMANA_FIGURE, figure_name=figure_name,
+                                                        figure_info=figure_info, last_day=last_day,
                                                         d_type=detail_type, is_show=False)
                     if details_figure_path == "Wrong":
                         ValueError("Missing the path of last data!")
