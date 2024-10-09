@@ -172,7 +172,7 @@ def historical(start='20241001'):
 
 if __name__ == "__main__":
     count_begin = time.time()
-    type_i = "B"
+    type_i = os.getenv("TYPE")
     if type_i == "A":
         @try_time
         def type_a():
