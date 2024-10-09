@@ -23,7 +23,6 @@ from utils.format2 import dict2json, json2csv
 from semana.sort import sort_semana
 from semana.qplot import *
 
-
 # 加载环境变量
 load_dotenv()
 
@@ -105,7 +104,7 @@ def catch_data(start_day, end_day, cities=None, is_show: bool = False):
                     else:
                         _error_code = result["code"]
                 else:
-                    print(f"state:\t{response_code}")
+                    print(f"state:\t{response_code}", location, day)
 
 
 def main(start_day, end_day, cities):
@@ -144,10 +143,43 @@ def main(start_day, end_day, cities):
                         print("Figure", details_figure_path, "is OK")
 
 
+def try_time(function):
+    def wrapper(*args, **kwargs):
+        try:
+            function(*args, **kwargs)
+        except Exception as e:
+            print(e)
+        finally:
+            count_end = time.time()
+            print(f"{(time_use := count_end - count_begin):.2f}s")
+    return wrapper
+
+
+@try_time
+def historical(start='20241001'):
+    _cities = ['Jiangsu', 'Zhejiang', 'Shanghai', 'Beijing']
+    while int(start) <= int(datetime.today().strftime("%Y%m%d")):
+        ssd, end = missing_day(start)
+
+        # 处理日期的逻辑
+        start_ftime = datetime.strptime(start, "%Y%m%d")
+        start = (start_ftime + timedelta(days=1)).strftime("%Y%m%d")
+        try:
+            main(start_day=ssd, end_day=end, cities=_cities)
+        except Exception as e:
+            print(e)
+
+
 if __name__ == "__main__":
     count_begin = time.time()
-    _cities = ['Jiangsu', 'Zhejiang', 'Shanghai', 'Beijing']
-    ssd, end = missing_day(os.getenv("START_DAY"), os.getenv("END_DAY"))
-    main(start_day=ssd, end_day=end, cities=_cities)
-    count_end = time.time()
-    print(f"{(time_use := count_end - count_begin):.2f}s")
+    type_i = "B"
+    if type_i == "A":
+        @try_time
+        def type_a():
+            _cities = ['Jiangsu', 'Zhejiang', 'Shanghai', 'Beijing']
+            ssd, end = missing_day(os.getenv("START_DAY"), os.getenv("END_DAY"))
+            main(start_day=ssd, end_day=end, cities=_cities)
+
+        type_a()
+    else:
+        historical()
