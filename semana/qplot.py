@@ -64,6 +64,28 @@ def qplot_aqi(data_path, figure_base, figure_name, is_show=False):
 
     # 数据透视
     days_order = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    # 检查是否存在重复项
+    duplicates = week_data.duplicated(subset=['hour', 'day'], keep=False)
+
+    if duplicates.any():
+        print(f"发现 {duplicates.sum()} 个重复项")
+
+        # 对重复项进行分组并合并
+        week_data = week_data.groupby(['hour', 'day'], as_index=False).agg({
+            'aqi': 'mean',  # 对 AQI 取平均值
+            'level': lambda x: x.mode().iloc[0],  # 取最常见的 level
+            'category': lambda x: x.mode().iloc[0],  # 取最常见的 category
+            'primary': lambda x: x.mode().iloc[0] if not x.mode().empty else None,  # 取最常见的 primary 污染物
+            'pm10': 'mean',
+            'pm2p5': 'mean',
+            'no2': 'mean',
+            'so2': 'mean',
+            'co': 'mean',
+            'o3': 'mean'
+        })
+
+        print(f"合并后的数据集大小: {week_data.shape}")
+
     pivot = week_data.pivot(index='hour', columns='day', values='aqi')
     pivot = pivot.reindex(columns=days_order)
 
