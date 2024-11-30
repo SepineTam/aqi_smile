@@ -179,7 +179,6 @@ if __name__ == "__main__":
             _cities = ['Jiangsu', 'Zhejiang', 'Shanghai', 'Beijing']
             ssd, end = missing_day(os.getenv("START_DAY"), os.getenv("END_DAY"))
             main(start_day=ssd, end_day=end, cities=_cities)
-
         type_a()
     else:
-        historical()
+        historical(start=os.getenv("HISTORICAL_START"))
