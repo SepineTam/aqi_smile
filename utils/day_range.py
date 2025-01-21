@@ -47,13 +47,13 @@ def missing_day(start=None, end=None):
         return start, end
 
     elif start is None and end is not None:
-        print("Missing start but exist end!\nGenerating end day...")
+        print("Missing start but exist end!\nGenerating start day...")
         end_date = datetime.strptime(end, "%Y%m%d")
         date_list = [(end_date - timedelta(days=x)).strftime('%Y%m%d') for x in range(7)]
         return date_list[-1], date_list[0]
 
     elif start is not None and end is None:
-        print("Missing end but exist start!\nGenerating start day...")
+        print("Missing end but exist start!\nGenerating end day...")
         start_date = datetime.strptime(start, "%Y%m%d")
         date_list = [(start_date + timedelta(days=x)).strftime('%Y%m%d') for x in range(7)]
         return date_list[0], date_list[-1]
